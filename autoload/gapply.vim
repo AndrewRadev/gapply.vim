@@ -8,7 +8,7 @@ function! s:NewPatch()
         \ }
 endfunction
 
-function! GapplyFoldexpr(lnum)
+function! gapply#Foldexpr(lnum)
   let line = getline(a:lnum)
 
   if line =~ s:file_start_pattern
@@ -31,16 +31,13 @@ function! gapply#Start()
   exe len(header_lines) . 'r!git diff'
   normal! gg
   $delete _
-  set filetype=gitadd.diff
+
+  set filetype=gapply.diff
+
   set buftype=acwrite
-
-  set foldmethod=expr
-  set foldexpr=GapplyFoldexpr(v:lnum)
-  set foldlevel=1
-
+  autocmd BufWriteCmd <buffer> call s:Sync()
   silent file Gapply
   set nomodified
-  autocmd BufWriteCmd <buffer> call s:Sync()
 endfunction
 
 function! s:Sync()
