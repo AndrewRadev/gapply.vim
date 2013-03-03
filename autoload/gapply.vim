@@ -1,12 +1,7 @@
+" TODO (2013-03-03) Edit patches by tweaking patch header
+
 let s:file_start_pattern  = 'diff --git a/\zs.\+\ze b/'
 let s:patch_start_pattern = '^@@ -\(\d\+\),\(\d\+\) +\(\d\+\),\(\d\+\) @@'
-
-function! s:NewPatch()
-  return {
-        \ 'file':  '',
-        \ 'lines': [],
-        \ }
-endfunction
 
 function! gapply#Foldexpr(lnum)
   let line = getline(a:lnum)
@@ -41,61 +36,40 @@ function! gapply#Start()
 endfunction
 
 function! s:Sync()
-  let patches = s:Parse()
-  call s:System('git reset')
+  let tempfile = tempname()
+  let lines    = s:Parse()
 
-  for [patch_id, patch] in items(patches)
-    call s:AddPatch(patch_id, patch)
-  endfor
+  call writefile(lines, tempfile)
+
+  call s:System('git reset')
+  call s:System('git apply -v --cached '.tempfile)
 
   set nomodified
 endfunction
 
-function! s:AddPatch(patch_id, patch)
-  let patch    = a:patch
-  let filename = patch.file
-
-  let lines = [
-        \ "--- a/".filename,
-        \ "+++ b/".filename,
-        \ ]
-
-  call extend(lines, patch.lines)
-
-  let tempfile = tempname()
-  call writefile(lines, tempfile)
-
-  call s:System('git apply -v --cached '.tempfile)
-endfunction
-
 function! s:Parse()
-  let patches       = {}
-  let current_file  = ''
-  let current_patch = s:NewPatch()
+  let lines          = []
+  let header_skipped = 0
 
-  for lineno in range(1, line('$'))
-    let line = getline(lineno)
-
-    if line =~ s:file_start_pattern
-      let current_file = matchstr(line, s:file_start_pattern)
-    elseif line =~ s:patch_start_pattern && current_file != ''
-      let current_patch                  = s:NewPatch()
-      let patches[current_file.' '.line] = current_patch
-      let current_patch.file             = current_file
-      call add(current_patch.lines, line)
+  for line in getbufline('%', 1, '$')
+    if line =~ '^#' && !header_skipped
+      " skip header comment
+    elseif !header_skipped
+      " we've passed through the header
+      let header_skipped = 1
     else
-      call add(current_patch.lines, line)
+      call add(lines, line)
     endif
   endfor
 
-  return patches
+  return lines
 endfunction
 
 function! s:System(command)
   let result = system(a:command)
 
   if v:shell_error
-    echoerr 'External command failed: '.a:command
+    echoerr 'External command failed: "'.a:command.'", Message: '.result
   endif
 
   return result
