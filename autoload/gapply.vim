@@ -36,6 +36,8 @@ function! gapply#Start()
 endfunction
 
 function! s:Sync()
+  call s:UpdateLineCounts()
+
   let tempfile = tempname()
   let lines    = s:Parse()
 
@@ -63,6 +65,46 @@ function! s:Parse()
   endfor
 
   return lines
+endfunction
+
+function! s:UpdateLineCounts()
+  let patch_lineno = 0
+  let old_count    = 0
+  let new_count    = 0
+
+  for lineno in range(1, line('$'))
+    let line = getline(lineno)
+
+    if line =~ s:patch_start_pattern || line =~ s:file_start_pattern
+      " adjust the current patch
+      if patch_lineno > 0
+        let patch_line = getline(patch_lineno)
+        let patch_line = substitute(patch_line, s:patch_start_pattern, '@@ -\1,'.old_count.' +\3,'.new_count.' @@', '')
+        call setline(patch_lineno, patch_line)
+      endif
+
+      " reset counters
+      let old_count = 0
+      let new_count = 0
+
+      " reset current patch, and possibly start a new one
+      if line =~ s:file_start_pattern
+        let patch_lineno = 0
+      else
+        let patch_lineno = lineno
+      endif
+    elseif line =~ '^-'
+      " deleted line
+      let old_count += 1
+    elseif line =~ '^+'
+      " added line
+      let new_count += 1
+    else
+      " untouched line
+      let new_count += 1
+      let old_count += 1
+    endif
+  endfor
 endfunction
 
 function! s:System(command)
