@@ -90,7 +90,7 @@ function! s:UpdateLineCounts()
       " reset current patch, and possibly start a new one
       if line =~ s:file_start_pattern
         let patch_lineno = 0
-      else
+      else " line =~ s:patch_start_pattern
         let patch_lineno = lineno
       endif
     elseif line =~ '^-'
@@ -105,6 +105,12 @@ function! s:UpdateLineCounts()
       let old_count += 1
     endif
   endfor
+
+  if patch_lineno > 0
+    let patch_line = getline(patch_lineno)
+    let patch_line = substitute(patch_line, s:patch_start_pattern, '@@ -\1,'.old_count.' +\3,'.new_count.' @@', '')
+    call setline(patch_lineno, patch_line)
+  endif
 endfunction
 
 function! s:System(command)
