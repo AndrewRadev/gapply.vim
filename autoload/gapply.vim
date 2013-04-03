@@ -77,11 +77,7 @@ function! s:UpdateLineCounts()
 
     if line =~ s:patch_start_pattern || line =~ s:file_start_pattern
       " adjust the current patch
-      if patch_lineno > 0
-        let patch_line = getline(patch_lineno)
-        let patch_line = substitute(patch_line, s:patch_start_pattern, '@@ -\1,'.old_count.' +\3,'.new_count.' @@', '')
-        call setline(patch_lineno, patch_line)
-      endif
+      call s:UpdatePatchLine(patch_lineno, old_count, new_count)
 
       " reset counters
       let old_count = 0
@@ -106,10 +102,18 @@ function! s:UpdateLineCounts()
     endif
   endfor
 
-  if patch_lineno > 0
-    let patch_line = getline(patch_lineno)
-    let patch_line = substitute(patch_line, s:patch_start_pattern, '@@ -\1,'.old_count.' +\3,'.new_count.' @@', '')
-    call setline(patch_lineno, patch_line)
+  call s:UpdatePatchLine(patch_lineno, old_count, new_count)
+endfunction
+
+function! s:UpdatePatchLine(lineno, old_count, new_count)
+  let lineno    = a:lineno
+  let old_count = a:old_count
+  let new_count = a:new_count
+
+  if lineno > 0
+    let line = getline(lineno)
+    let line = substitute(line, s:patch_start_pattern, '@@ -\1,'.old_count.' +\3,'.new_count.' @@', '')
+    call setline(lineno, line)
   endif
 endfunction
 
