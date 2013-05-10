@@ -1,5 +1,3 @@
-" TODO (2013-03-03) Edit patches by tweaking patch header
-
 let s:file_start_pattern  = 'diff --git a/\zs.\+\ze b/'
 let s:patch_start_pattern = '^@@ -\(\d\+\),\(\d\+\) +\(\d\+\),\(\d\+\) @@'
 
