@@ -12,6 +12,7 @@ endif
 
 command! Gapply call gapply#Staged()
 command! GapplyCached call gapply#Unstaged()
+command! GapplyShow call gapply#Show()
 
 let &cpo = s:keepcpo
 unlet s:keepcpo
