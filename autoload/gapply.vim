@@ -13,7 +13,15 @@ function! gapply#Foldexpr(lnum)
   endif
 endfunction
 
-function! gapply#Start()
+function! gapply#Staged()
+    call gapply#Start("--cached")
+endfunction
+
+function! gapply#Unstaged()
+    call gapply#Start("")
+endfunction
+
+function! gapply#Start(diffoptions)
   let header_lines = [
         \ '#',
         \ '# You can edit the diff below and the git index will be changed to reflect its',
@@ -21,7 +29,7 @@ function! gapply#Start()
         \ '#',
         \ ]
   call append(0, header_lines)
-  exe len(header_lines) . 'r!git diff'
+  exe len(header_lines) . 'r!git diff ' . a:diffoptions
   normal! gg
   $delete _
 

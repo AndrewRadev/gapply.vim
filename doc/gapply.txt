@@ -14,11 +14,17 @@ CONTENTS                                        *gapply*   *gapply-contents*
 INSTALLATION                                            *gapply-installation*
 
 There are several ways to install the plugin. The recommended one is by using
-Tim Pope's pathogen (http://www.vim.org/scripts/script.php?script_id=2332). In
-that case, you can clone the plugin's git repository like so:
+Vundle (https://github.com/gmarik/Vundle.vim). In that case, you get this 
+plugin add this to ~/.vimrc:
 >
-    git clone git://github.com/AndrewRadev/gapply.vim.git ~/.vim/bundle/gapply
-<
+    Plugin 'AndrewRadev/gapply.vim'
+
+and issuing:
+
+    :PluginInstall
+
+Advanced: (discouraged)
+
 If your vim configuration is under git version control, you could also set up
 the repository as a submodule, which would allow you to update more easily.
 The command is (provided you're in ~/.vim):

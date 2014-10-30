@@ -10,7 +10,8 @@ if !exists('g:gapply_foldlevel')
   let g:gapply_foldlevel = 1
 endif
 
-command! Gapply call gapply#Start()
+command! Gapply call gapply#Staged()
+command! GapplyCached call gapply#Unstaged()
 
 let &cpo = s:keepcpo
 unlet s:keepcpo
