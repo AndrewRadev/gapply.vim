@@ -32,9 +32,18 @@ endfunction
 function! gapply#StartCommand(command)
   let header_lines = [
         \ '#',
-        \ '# You can edit the diff below and the git index will be changed to reflect its',
-        \ '# contents.',
+        \ '# You can edit the diff below and the git index will be changed to',
+        \ '# reflect its contents.',
         \ '#',
+        \ '# To remove ''-'' lines, make them '' '' lines (context).',
+        \ '# To remove ''+'' lines, delete them.',
+        \ '# Lines starting with # will be removed.',
+        \ '#',
+        \ '# If the patch applies cleanly, the edited hunk will immediately be',
+        \ '# marked for staging. If it does not apply cleanly, you will be given',
+        \ '# an opportunity to edit again. If all lines of the hunk are removed,',
+        \ '# then the edit is aborted and the hunk is left unchanged.',
+        \ '# ---',
         \ ]
   call append(0, header_lines)
   exe len(header_lines) . 'r!' . a:command
