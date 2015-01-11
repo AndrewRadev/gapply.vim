@@ -5,8 +5,6 @@ CONTENTS                                        *gapply*   *gapply-contents*
 
     Installation................................: |gapply-installation|
     Usage.......................................: |gapply-usage|
-    Settings....................................: |gapply-settings|
-    Internals...................................: |gapply-internals|
     Issues......................................: |gapply-issues|
 
 
@@ -17,7 +15,7 @@ There are several ways to install the plugin. The recommended one is by using
 Vundle (https://github.com/gmarik/Vundle.vim). In that case, you get this 
 plugin add this to ~/.vimrc:
 >
-    Plugin 'AndrewRadev/gapply.vim'
+    Plugin 'albfan/gapply.vim'
 
 and issuing:
 
@@ -31,6 +29,7 @@ The command is (provided you're in ~/.vim):
 >
     git submodule add git://github.com/AndrewRadev/gapply.vim.git bundle/gapply
 <
+Manual:
 
 Another way is to simply copy all the essential directories inside the ~/.vim
 directory: autoload, doc, plugin.
@@ -39,25 +38,27 @@ directory: autoload, doc, plugin.
 ==============================================================================
 USAGE                                                          *gapply-usage*
 
-TODO
+From commandline, inside a directory repo:
 
+    vim +Gapply
 
-==============================================================================
-SETTINGS                                                    *gapply-settings*
+You'll get a diff, just like from git diff | vim -, except you can delete
+patches and when you save, the current state of the diff will be applied to
+the index.
 
-TODO
+    vim +GApplyCached 
 
+Same for staged changes
 
-==============================================================================
-INTERNALS                                                  *gapply-internals*
+    vim +GApplyShow
 
-TODO
+Same for actual commit
 
 ==============================================================================
 ISSUES                                                        *gapply-issues*
 
 Any issues and suggestions are very welcome on the github bugtracker:
-https://github.com/AndrewRadev/gapply.vim/issues
+https://github.com/albfan/gapply.vim/issues
 
 
 vim:tw=78:sw=4:ft=help:norl:
