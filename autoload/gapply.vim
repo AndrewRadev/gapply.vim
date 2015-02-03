@@ -47,7 +47,6 @@ function! gapply#StartCommand(command)
         \ ]
   call append(0, header_lines)
   exe len(header_lines) . 'r!' . a:command
-  normal! gg
   $delete _
 
   set filetype=gapply.diff
@@ -56,6 +55,7 @@ function! gapply#StartCommand(command)
   autocmd BufWriteCmd <buffer> call s:Sync()
   silent file Gapply
   set nomodified
+  normal! gg
 endfunction
 
 function! s:Sync()
