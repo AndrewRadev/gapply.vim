@@ -13,16 +13,40 @@ function! gapply#Foldexpr(lnum)
   endif
 endfunction
 
-function! gapply#Start()
+function! gapply#Staged()
+    call gapply#StartDiff("--cached")
+endfunction
+
+function! gapply#Unstaged()
+    call gapply#StartDiff("")
+endfunction
+
+function! gapply#StartDiff(diffoptions)
+    call gapply#StartCommand("git diff " . a:diffoptions )
+endfunction
+
+function! gapply#Show()
+    call gapply#StartCommand("git show")
+endfunction
+
+function! gapply#StartCommand(command)
   let header_lines = [
         \ '#',
-        \ '# You can edit the diff below and the git index will be changed to reflect its',
-        \ '# contents.',
+        \ '# You can edit the diff below and the git index will be changed to',
+        \ '# reflect its contents.',
         \ '#',
+        \ '# To remove ''-'' lines, make them '' '' lines (context).',
+        \ '# To remove ''+'' lines, delete them.',
+        \ '# Lines starting with # will be removed.',
+        \ '#',
+        \ '# If the patch applies cleanly, the edited hunk will immediately be',
+        \ '# marked for staging. If it does not apply cleanly, you will be given',
+        \ '# an opportunity to edit again. If all lines of the hunk are removed,',
+        \ '# then the edit is aborted and the hunk is left unchanged.',
+        \ '# ---',
         \ ]
   call append(0, header_lines)
-  exe len(header_lines) . 'r!git diff'
-  normal! gg
+  exe len(header_lines) . 'r!' . a:command
   $delete _
 
   set filetype=gapply.diff
@@ -31,6 +55,7 @@ function! gapply#Start()
   autocmd BufWriteCmd <buffer> call s:Sync()
   silent file Gapply
   set nomodified
+  normal! gg
 endfunction
 
 function! s:Sync()
